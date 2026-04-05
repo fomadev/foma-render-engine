@@ -1,7 +1,7 @@
 {
   "name": "foma-render-engine",
   "version": "1.0.0",
-  "type": "module", 
+  "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -13,14 +13,14 @@
     "docker:run": "docker-compose up"
   },
   "devDependencies": {
+    "@types/mjml": "^4.7.4",
     "@types/node": "^22.0.0",
     "tsup": "^8.5.1",
-    "typescript": "^5.4.0", 
+    "typescript": "^5.4.0",
     "vitest": "^1.4.0"
   },
   "dependencies": {
     "juice": "^11.0.1",
-    "mjml": "^4.15.3",
-    "@types/mjml": "^4.7.4"
+    "mjml": "^4.18.0"
   }
 }
