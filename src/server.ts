@@ -2,7 +2,7 @@ import Fastify from 'fastify';
 import { FomaEngine, RenderOptions } from './index.js';
 
 const fastify = Fastify({ 
-  logger: true // Garde le log pour voir les erreurs de rendu en console
+  logger: true 
 });
 
 /**
@@ -13,70 +13,84 @@ interface RenderBody {
   options?: RenderOptions;
 }
 
+// --- SÉCURITÉ (Préparation .env) ---
+// Ce hook s'exécute avant chaque requête pour vérifier l'accès
+fastify.addHook('preHandler', async (request, reply) => {
+  const apiKey = request.headers['x-api-key'];
+  const MASTER_KEY = process.env.RENDER_API_KEY || 'foma_debug_key'; 
+  
+  // Logique de protection (désactivée par défaut pour tes tests Postman)
+  /*
+  if (apiKey !== MASTER_KEY) {
+    return reply.status(401).send({ error: 'Clé API invalide ou manquante' });
+  }
+  */
+});
+
 /**
- * Route de rendu POST /render
+ * ROUTE PRINCIPALE : POST /render
+ * Transforme MJML + Handlebars en HTML final
  */
 fastify.post('/render', async (request, reply) => {
   const { template, options } = request.body as RenderBody;
 
-  // 1. Vérification de la présence du template
+  // 1. Validation de l'entrée
   if (!template) {
     return reply.status(400).send({ 
-      error: 'Template is required',
-      message: 'Le champ "template" est obligatoire dans le corps JSON.' 
+      error: 'Le template est requis',
+      message: 'Veuillez fournir un template MJML ou HTML dans le champ "template".'
     });
   }
 
   try {
-    /**
-     * ASTUCE : Si tu envoies juste du HTML simple comme <h1>...</h1>, 
-     * MJML va planter. On peut vérifier si c'est du MJML valide.
-     */
-    let finalTemplate = template;
-    if (!template.trim().startsWith('<mjml>')) {
-      // Si ce n'est pas du MJML, on l'enrobe pour éviter l'erreur "Malformed MJML"
-      // Ou tu peux décider de traiter le HTML différemment selon ta logique
+    // 2. Pré-traitement : Enrobage MJML automatique si nécessaire
+    let finalTemplate = template.trim();
+    if (!finalTemplate.startsWith('<mjml>')) {
       finalTemplate = `<mjml><mj-body><mj-section><mj-column><mj-text>${template}</mj-text></mj-column></mj-section></mj-body></mjml>`;
     }
 
-    // 2. Exécution du moteur Foma
-    const html = FomaEngine.render(finalTemplate, options);
+    // 3. Appel du moteur FomaEngine (Handlebars + MJML)
+    const result = FomaEngine.render(finalTemplate, options);
 
-    return { 
-      success: true,
-      html 
+    // 4. Réponse structurée
+    return {
+      success: result.success,
+      html: result.html,
+      mjmlErrors: result.errors // Liste des erreurs de syntaxe MJML
     };
 
   } catch (error: any) {
-    fastify.log.error(`[Render Error]: ${error.message}`);
-    
+    fastify.log.error(`[Foma Server Error]: ${error.message}`);
     return reply.status(500).send({ 
-      error: 'Rendering failed', 
-      message: error.message,
-      hint: 'Assurez-vous que votre template est une structure MJML valide ou du texte brut.'
+      error: 'Erreur lors du rendu', 
+      message: error.message 
     });
   }
 });
 
 /**
- * Route de test (Health Check)
+ * ROUTE DE SANTÉ : GET /
  */
 fastify.get('/', async () => {
-  return { status: 'Foma Render Engine is Online', version: '1.0.0' };
+  return { 
+    status: 'Foma Render Engine is Online', 
+    version: '1.1.0',
+    engine: 'Handlebars + MJML'
+  };
 });
 
 /**
- * Démarrage du serveur
+ * LANCEMENT DU SERVEUR
  */
 const start = async () => {
   try {
-    // Port 3000 et Host 0.0.0.0 pour Docker
-    await fastify.listen({ 
+    // Port 3000 et Host 0.0.0.0 (indispensable pour Docker et accès externe)
+    const address = await fastify.listen({ 
       port: 3000, 
       host: '0.0.0.0' 
     });
     
-    console.log("🚀 Serveur Foma prêt sur http://localhost:3000");
+    console.log(`🚀 Serveur Foma prêt sur ${address}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

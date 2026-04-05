@@ -6,12 +6,12 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-  "dev": "tsup src/index.ts src/server.ts --watch --format esm --onSuccess \"node dist/server.js\"",
-  "build": "tsup src/index.ts src/server.ts --format esm,cjs --dts --minify",
-  "start": "node dist/server.js",
-  "test": "vitest",
-  "docker:build": "docker build -t foma-render-engine .",
-  "docker:run": "docker-compose up"
+    "dev": "tsup src/index.ts src/server.ts --watch --format esm --onSuccess \"node dist/server.js\"",
+    "build": "tsup src/index.ts src/server.ts --format esm,cjs --dts --minify",
+    "start": "node dist/server.js",
+    "test": "vitest",
+    "docker:build": "docker build -t foma-render-engine .",
+    "docker:run": "docker-compose up"
   },
   "devDependencies": {
     "@types/mjml": "^4.7.4",
@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "fastify": "^5.8.4",
+    "handlebars": "^4.7.9",
     "juice": "^11.0.1",
     "mjml": "^4.18.0"
   }
