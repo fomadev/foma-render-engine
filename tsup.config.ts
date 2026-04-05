@@ -8,4 +8,5 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   minify: true,
+  shims: true, // Aide à la compatibilité CJS/ESM
 });

@@ -1,4 +1,4 @@
-import { FomaParser } from './core/parser';
+import { FomaParser } from './core/parser.js';
 
 export interface RenderOptions {
   data: Record<string, any>;
