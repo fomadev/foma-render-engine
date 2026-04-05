@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "dev": "tsup src/index.ts --watch --format esm,cjs",
+  "build": "tsup src/index.ts --format esm,cjs --dts --minify",
+  "test": "vitest",
+  "docker:build": "docker build -t foma-render-engine .",
+  "docker:run": "docker-compose up"
   },
   "keywords": [],
   "author": "",
