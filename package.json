@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "dev": "tsup src/index.ts --watch --format esm,cjs",
-  "build": "tsup src/index.ts --format esm,cjs --dts --minify",
-  "test": "vitest",
-  "docker:build": "docker build -t foma-render-engine .",
-  "docker:run": "docker-compose up"
+    "dev": "tsup src/index.ts --watch --format esm,cjs",
+    "build": "tsup src/index.ts --format esm,cjs --dts --minify",
+    "test": "vitest",
+    "docker:build": "docker build -t foma-render-engine .",
+    "docker:run": "docker-compose up"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +19,8 @@
     "tsup": "^8.5.1",
     "typescript": "^6.0.2",
     "vitest": "^4.1.2"
+  },
+  "dependencies": {
+    "juice": "^11.1.1"
   }
 }
