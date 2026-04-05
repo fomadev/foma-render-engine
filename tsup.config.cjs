@@ -1,0 +1,10 @@
+// tsup.config.cjs
+module.exports = {
+  entry: ['src/index.ts'],
+  format: ['cjs', 'esm'],
+  dts: true,
+  splitting: false,
+  sourcemap: true,
+  clean: true,
+  minify: true
+};
