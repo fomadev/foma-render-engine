@@ -1,0 +1,12 @@
+<style>
+  .container { font-family: sans-serif; padding: 20px; border: 1px solid #eee; }
+  h1 { color: #0052FF; }
+  .otp-code { font-size: 32px; font-weight: bold; color: #333; letter-spacing: 5px; }
+</style>
+
+<div class="container">
+  <h1>Validation Foma</h1>
+  <p>Votre code de vérification est :</p>
+  <div class="otp-code">{{code}}</div>
+  <p>Ce code expire dans 5 minutes.</p>
+</div>

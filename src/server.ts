@@ -1,4 +1,8 @@
 import Fastify from 'fastify';
+import { readFileSync, existsSync } from 'fs';
+import path from 'path';
+import Handlebars from 'handlebars';
+import juice from 'juice';
 import { FomaEngine, RenderOptions } from './index.js';
 
 const fastify = Fastify({ 
@@ -6,76 +10,85 @@ const fastify = Fastify({
 });
 
 /**
- * Interface pour le corps de la requête
+ * Interface pour la nouvelle route de fichiers .fre
  */
-interface RenderBody {
-  template: string;
-  options?: RenderOptions;
+interface RenderFreBody {
+  templateName: string; // ex: "otp" pour lire "templates/otp.fre"
+  context: Record<string, any>; // ex: { code: "123456" }
 }
 
-// --- SÉCURITÉ (Préparation .env) ---
-// Ce hook s'exécute avant chaque requête pour vérifier l'accès
-fastify.addHook('preHandler', async (request, reply) => {
-  const apiKey = request.headers['x-api-key'];
-  const MASTER_KEY = process.env.RENDER_API_KEY || 'foma_debug_key'; 
-  
-  // Logique de protection (désactivée par défaut pour tes tests Postman)
-  /*
-  if (apiKey !== MASTER_KEY) {
-    return reply.status(401).send({ error: 'Clé API invalide ou manquante' });
-  }
-  */
-});
-
 /**
- * ROUTE PRINCIPALE : POST /render
- * Transforme MJML + Handlebars en HTML final
+ * ROUTE 1 : POST /render-fre
+ * Lit un fichier .fre sur le disque, injecte les données et inline le CSS
  */
-fastify.post('/render', async (request, reply) => {
-  const { template, options } = request.body as RenderBody;
+fastify.post('/render-fre', async (request, reply) => {
+  const { templateName, context } = request.body as RenderFreBody;
 
-  // 1. Validation de l'entrée
-  if (!template) {
-    return reply.status(400).send({ 
-      error: 'Le template est requis',
-      message: 'Veuillez fournir un template MJML ou HTML dans le champ "template".'
-    });
+  if (!templateName) {
+    return reply.status(400).send({ error: "Le nom du template est requis." });
   }
 
   try {
-    // 2. Pré-traitement : Enrobage MJML automatique si nécessaire
-    let finalTemplate = template.trim();
-    if (!finalTemplate.startsWith('<mjml>')) {
-      finalTemplate = `<mjml><mj-body><mj-section><mj-column><mj-text>${template}</mj-text></mj-column></mj-section></mj-body></mjml>`;
+    // 1. Définition du chemin du fichier (dossier /templates à la racine du projet)
+    const filePath = path.join(process.cwd(), 'templates', `${templateName}.fre`);
+
+    // Vérification de l'existence du fichier
+    if (!existsSync(filePath)) {
+      return reply.status(404).send({ 
+        success: false, 
+        message: `Template '${templateName}.fre' non trouvé dans le dossier /templates` 
+      });
     }
 
-    // 3. Appel du moteur FomaEngine (Handlebars + MJML)
-    const result = FomaEngine.render(finalTemplate, options);
+    // 2. Lecture du contenu brut
+    const rawContent = readFileSync(filePath, 'utf-8');
 
-    // 4. Réponse structurée
-    return {
-      success: result.success,
-      html: result.html,
-      mjmlErrors: result.errors // Liste des erreurs de syntaxe MJML
+    // 3. Compilation Handlebars (remplace les {{ variables }})
+    const template = Handlebars.compile(rawContent);
+    const htmlWithData = template(context || {});
+
+    // 4. Transformation Juice (Injecte <style> directement dans les balises HTML)
+    const finalHtml = juice(htmlWithData);
+
+    return { 
+      success: true, 
+      template: templateName,
+      html: finalHtml 
     };
 
   } catch (error: any) {
-    fastify.log.error(`[Foma Server Error]: ${error.message}`);
+    fastify.log.error(`[FRE Error]: ${error.message}`);
     return reply.status(500).send({ 
-      error: 'Erreur lors du rendu', 
+      success: false, 
+      error: "Erreur lors du traitement du fichier .fre",
       message: error.message 
     });
   }
 });
 
 /**
- * ROUTE DE SANTÉ : GET /
+ * ROUTE 2 : POST /render (Ton ancienne route MJML reste disponible)
+ */
+fastify.post('/render', async (request, reply) => {
+  const { template, options } = request.body as any;
+  if (!template) return reply.status(400).send({ error: 'Template requis' });
+
+  try {
+    const result = FomaEngine.render(template, options);
+    return { success: true, html: result.html, mjmlErrors: result.errors };
+  } catch (error: any) {
+    return reply.status(500).send({ error: error.message });
+  }
+});
+
+/**
+ * ROUTE DE SANTÉ
  */
 fastify.get('/', async () => {
   return { 
-    status: 'Foma Render Engine is Online', 
-    version: '1.1.0',
-    engine: 'Handlebars + MJML'
+    status: 'Foma Render Engine Online', 
+    version: '1.2.0',
+    features: ['MJML Support', 'Handlebars Templates', 'Juice CSS Inlining']
   };
 });
 
@@ -84,13 +97,11 @@ fastify.get('/', async () => {
  */
 const start = async () => {
   try {
-    // Port 3000 et Host 0.0.0.0 (indispensable pour Docker et accès externe)
-    const address = await fastify.listen({ 
+    await fastify.listen({ 
       port: 3000, 
       host: '0.0.0.0' 
     });
-    
-    console.log(`🚀 Serveur Foma prêt sur ${address}`);
+    console.log("🚀 Foma Engine avec Juice & Handlebars prêt sur port 3000");
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
