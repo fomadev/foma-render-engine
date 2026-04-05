@@ -1,0 +1,62 @@
+<style>
+  .welcome-title {
+    color: #0052FF;
+    font-size: 28px;
+    margin-bottom: 10px;
+    font-weight: 800;
+  }
+  .user-name {
+    color: #333;
+    font-weight: 700;
+  }
+  .intro-text {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 30px;
+  }
+  .feature-list {
+    background: #f8faff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    list-style: none;
+  }
+  .feature-item {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+  .cta-button {
+    display: inline-block;
+    background-color: #0052FF;
+    color: #ffffff !important;
+    padding: 15px 30px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+  }
+</style>
+
+<h1 class="welcome-title">Welcome to the Foma ecosystem!</h1>
+
+<p class="intro-text">
+  Hello <span class="user-name">{{userName}}</span>,<br><br>
+  We are delighted to have you with us. Your account on <strong>{{serviceName}}</strong> is now active.
+</p>
+
+<div class="feature-list">
+  <p style="margin-top:0; font-weight:bold; color:#0052FF;">What you can do right now:</p>
+  <div class="feature-item">✅ Access your secure dashboard</div>
+  <div class="feature-item">✅ Configure your payment preferences</div>
+  <div class="feature-item">✅ Explore our innovative digital solutions</div>
+</div>
+
+<div style="text-align: center; margin-top: 20px;">
+  <a href="{{actionUrl}}" class="cta-button">Start the adventure</a>
+</div>
+
+<p style="margin-top: 40px; font-size: 13px; color: #777;">
+  If you have any questions, our technical support is available 24/7 to assist you in your digital transition in DRC.
+</p>

@@ -1,10 +1,10 @@
-<h2 style="margin-top: 0;">Code de vérification</h2>
-<p>Bonjour <strong>{{userName}}</strong>,</p>
-<p>Pour sécuriser votre accès, veuillez utiliser le code de confirmation suivant :</p>
+<h2 style="margin-top: 0;">Verification Code</h2>
+<p>Hello <strong>{{userName}}</strong>,</p>
+<p>To secure your access, please use the following confirmation code :</p>
 
 <div style="background: #f0f4ff; border: 2px dashed #0052FF; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; color: #0052FF; letter-spacing: 5px; margin: 20px 0;">
   {{code}}
 </div>
 
-<p>Ce code est valable pendant 10 minutes. Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>
-<p>Cordialement,<br>L'équipe {{companyName}}</p>
+<p>This code is valid for 10 minutes. If you did not request this, please ignore this email.</p>
+<p>Sincerely,<br>The Team {{companyName}}</p>
