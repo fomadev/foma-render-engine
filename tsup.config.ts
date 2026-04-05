@@ -2,11 +2,12 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig({
   entry: ['src/index.ts', 'src/server.ts'],
-  format: ['cjs', 'esm'],
+  format: ['esm'],
   dts: true,
   splitting: false,
   sourcemap: true,
   clean: true,
   minify: true,
-  shims: true, // Aide à la compatibilité CJS/ESM
+  shims: true,
+  noExternal: ['fastify', 'mjml', 'juice'],
 });
