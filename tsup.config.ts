@@ -7,7 +7,17 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  minify: true,
-  shims: true,
-  noExternal: ['fastify', 'mjml', 'juice'],
+  minify: false, // Désactive le minify pour le moment pour mieux voir les erreurs si besoin
+  // IMPORTANT : On dit à tsup de NE PAS toucher aux modules natifs de Node
+  external: [
+    'fastify', 
+    'mjml', 
+    'juice',
+    'events',
+    'util',
+    'path',
+    'url',
+    'fs',
+    'stream'
+  ],
 });
