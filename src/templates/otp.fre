@@ -1,12 +1,10 @@
-<style>
-  .container { font-family: sans-serif; padding: 20px; border: 1px solid #eee; }
-  h1 { color: #0052FF; }
-  .otp-code { font-size: 32px; font-weight: bold; color: #333; letter-spacing: 5px; }
-</style>
+<h2 style="margin-top: 0;">Code de vérification</h2>
+<p>Bonjour <strong>{{userName}}</strong>,</p>
+<p>Pour sécuriser votre accès, veuillez utiliser le code de confirmation suivant :</p>
 
-<div class="container">
-  <h1>Validation Foma</h1>
-  <p>Votre code de vérification est :</p>
-  <div class="otp-code">{{code}}</div>
-  <p>Ce code expire dans 5 minutes.</p>
+<div style="background: #f0f4ff; border: 2px dashed #0052FF; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; color: #0052FF; letter-spacing: 5px; margin: 20px 0;">
+  {{code}}
 </div>
+
+<p>Ce code est valable pendant 10 minutes. Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>
+<p>Cordialement,<br>L'équipe {{companyName}}</p>
