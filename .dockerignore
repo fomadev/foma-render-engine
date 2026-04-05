@@ -1,0 +1,27 @@
+# Dépendances (doivent être installées dans l'image)
+node_modules/
+npm-debug.log
+
+# Build et Sorties
+dist/
+out/
+lib/
+*.tsbuildinfo
+
+# Tests et Couverture
+coverage/
+tests/
+*.test.ts
+*.spec.ts
+vitest.config.ts
+
+# Git et IDE
+.git
+.gitignore
+.vscode/
+.idea/
+
+# Divers
+README.md
+LICENSE
+.DS_Store
